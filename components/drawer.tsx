@@ -8,6 +8,7 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet";
+import { Button } from "./ui/button";
 
 export const Drawer = () => {
     return (
@@ -20,8 +21,13 @@ export const Drawer = () => {
                         This action cannot be undone. This will permanently delete your account and
                         remove your data from our servers.
                     </SheetDescription>
-                    <SheetClose onClick={() => console.log(123)}>Close</SheetClose>
                 </SheetHeader>
+                <div className="h-full flex flex-col justify-between items-center">
+                    <Button>Сменить тему</Button>
+                    <SheetClose onClick={() => console.log(123)}>
+                        <Button>Закрыть</Button>
+                    </SheetClose>
+                </div>
             </SheetContent>
         </Sheet>
     );
