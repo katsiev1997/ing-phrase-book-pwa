@@ -2,6 +2,16 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { NavMenu } from "@/components/nav-menu";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Montserrat } from 'next/font/google'
+
+
+const montserrat = Montserrat({
+	weight: ['400', '500', '600', '700', '800'],
+	style: ['normal'],
+	subsets: ['latin'],
+	variable: '--font-montserrat',
+	display: 'swap',
+})
 
 export const metadata: Metadata = {
     title: "IngPhraseBook - ингушский разговорник",
@@ -15,7 +25,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={`antialiased`}>
+            <body className={montserrat.variable}>
                 <ThemeProvider
                     attribute="class"
                     defaultTheme="system"
@@ -23,7 +33,7 @@ export default function RootLayout({
                     disableTransitionOnChange
                 >
                     {children}
-                    <NavMenu />
+                    <NavMenu />                    
                 </ThemeProvider>
             </body>
         </html>

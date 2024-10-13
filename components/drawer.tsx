@@ -13,7 +13,7 @@ import { Button } from "./ui/button";
 export const Drawer = () => {
     return (
         <Sheet>
-            <SheetTrigger>Сменить тему</SheetTrigger>
+            <SheetTrigger  className="border border-border px-4 py-2 hover:border-black transition-all rounded absolute left-1/2 bottom-20 z-10 -translate-x-1/2 font-semibold">Сменить тему</SheetTrigger>
             <SheetContent>
                 <SheetHeader>
                     <SheetTitle>Выберите тему разговора!</SheetTitle>

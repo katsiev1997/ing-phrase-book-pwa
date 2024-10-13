@@ -8,14 +8,11 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
 
 export default function Home() {
     return (
         <div className="w-full max-w-xl mx-auto my-0">
-            <Button className="absolute left-1/2 bottom-20 z-10 -translate-x-1/2 font-semibold">
-                <Drawer />
-            </Button>
+            <Drawer />
             <h1 className="text-3xl font-bold mt-2 ml-3">Главная</h1>
             <div className="overflow-y-auto h-[calc(100vh-4rem)] pb-28">
                 <Accordion type="single" collapsible className="w-full px-5">
