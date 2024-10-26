@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
             return NextResponse.json(categories);
         }
     } catch (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error }, { status: 500 });
     }
 }
 
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json(newCategory, { status: 201 });
     } catch (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error }, { status: 500 });
     }
 }
 
@@ -80,7 +80,7 @@ export async function PUT(req: NextRequest) {
 
         return NextResponse.json(updatedCategory);
     } catch (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error }, { status: 500 });
     }
 }
 
@@ -101,6 +101,6 @@ export async function DELETE(req: NextRequest) {
 
         return NextResponse.json({ message: "Category deleted successfully" });
     } catch (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error }, { status: 500 });
     }
 }

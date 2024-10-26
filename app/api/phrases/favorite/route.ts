@@ -16,8 +16,8 @@ export async function GET(req: NextRequest) {
         const userWithFavorites = await prisma.user.findUnique({
             where: { id: Number(userId) },
             include: {
-                favoritePhrases: true // Включаем избранные фразы пользователя
-            }
+                favoritePhrases: true, // Включаем избранные фразы пользователя
+            },
         });
 
         if (!userWithFavorites) {
@@ -27,10 +27,9 @@ export async function GET(req: NextRequest) {
         // Возвращаем только избранные фразы
         return NextResponse.json(userWithFavorites.favoritePhrases);
     } catch (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error }, { status: 500 });
     }
 }
-
 
 // POST /api/phrases/favorite
 export async function POST(req: NextRequest) {
@@ -40,13 +39,16 @@ export async function POST(req: NextRequest) {
 
         // Проверка на наличие необходимых данных
         if (!userId || !phraseId) {
-            return NextResponse.json({ error: "User ID and Phrase ID are required" }, { status: 400 });
+            return NextResponse.json(
+                { error: "User ID and Phrase ID are required" },
+                { status: 400 }
+            );
         }
 
         // Проверяем, существует ли пользователь
         const user = await prisma.user.findUnique({
             where: { id: Number(userId) },
-            include: { favoritePhrases: true }
+            include: { favoritePhrases: true },
         });
 
         if (!user) {
@@ -55,7 +57,7 @@ export async function POST(req: NextRequest) {
 
         // Проверяем, существует ли фраза
         const phrase = await prisma.phrase.findUnique({
-            where: { id: Number(phraseId) }
+            where: { id: Number(phraseId) },
         });
 
         if (!phrase) {
@@ -67,15 +69,15 @@ export async function POST(req: NextRequest) {
             where: { id: Number(userId) },
             data: {
                 favoritePhrases: {
-                    connect: { id: Number(phraseId) } // Добавляем связь с фразой
-                }
+                    connect: { id: Number(phraseId) }, // Добавляем связь с фразой
+                },
             },
-            include: { favoritePhrases: true } // Возвращаем обновленный список избранных фраз
+            include: { favoritePhrases: true }, // Возвращаем обновленный список избранных фраз
         });
 
         return NextResponse.json(updatedUser);
     } catch (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error }, { status: 500 });
     }
 }
 
@@ -87,7 +89,10 @@ export async function DELETE(req: NextRequest) {
         const phraseId = searchParams.get("phraseId");
 
         if (!userId || !phraseId) {
-            return NextResponse.json({ error: "User ID and Phrase ID are required" }, { status: 400 });
+            return NextResponse.json(
+                { error: "User ID and Phrase ID are required" },
+                { status: 400 }
+            );
         }
 
         // Удаление фразы из избранного
@@ -95,15 +100,14 @@ export async function DELETE(req: NextRequest) {
             where: { id: Number(userId) },
             data: {
                 favoritePhrases: {
-                    disconnect: { id: Number(phraseId) } // Удаляем связь с фразой
-                }
+                    disconnect: { id: Number(phraseId) }, // Удаляем связь с фразой
+                },
             },
-            include: { favoritePhrases: true } // Возвращаем обновленный список избранных фраз
+            include: { favoritePhrases: true }, // Возвращаем обновленный список избранных фраз
         });
 
         return NextResponse.json(updatedUser);
     } catch (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error }, { status: 500 });
     }
 }
-

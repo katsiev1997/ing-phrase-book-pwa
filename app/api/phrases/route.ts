@@ -5,39 +5,28 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
     try {
         const { searchParams } = req.nextUrl;
-        const phraseId = searchParams.get("id");
+        const categoryId = searchParams.get("categoryId");
 
-        if (phraseId) {
-            // Получение одной фразы по id
-            const phrase = await prisma.phrase.findUnique({
-                where: { id: Number(phraseId) },
-                include: {
-                    category: true, // включаем категорию
-                    favoritedBy: true // включаем пользователей, которые добавили в избранное
-                }
-            });
-
-            if (!phrase) {
-                return NextResponse.json({ error: "Phrase not found" }, { status: 404 });
-            }
-
-            return NextResponse.json(phrase);
-        } else {
-            // Получение всех фраз
-            const phrases = await prisma.phrase.findMany({
-                include: {
-                    category: true,
-                    favoritedBy: true,
-                }
-            });
-
-            return NextResponse.json(phrases);
+        if (!categoryId) {
+            return NextResponse.json({ error: "Category not found" }, { status: 404 });
         }
-    } catch (error:any) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+
+        const phrases = await prisma.phrase.findMany({
+            where: { categoryId: Number(categoryId) },
+        });
+
+        console.log(phrases);
+
+        // Проверяем длину массива фраз
+        if (phrases.length === 0) {
+            return NextResponse.json({ error: "No phrases found" }, { status: 404 });
+        }
+
+        return NextResponse.json(phrases);
+    } catch (error) {
+        return NextResponse.json({ error }, { status: 500 });
     }
 }
-
 
 // POST /api/phrases
 export async function POST(req: NextRequest) {
@@ -53,17 +42,16 @@ export async function POST(req: NextRequest) {
                 transcription,
                 audioUrl, // Поле может быть пустым (optional)
                 category: {
-                    connect: { id: Number(categoryId) } // Подключаем категорию через внешний ключ
-                }
-            }
+                    connect: { id: Number(categoryId) }, // Подключаем категорию через внешний ключ
+                },
+            },
         });
 
         return NextResponse.json(newPhrase, { status: 201 });
-    } catch (error:any) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+    } catch (error) {
+        return NextResponse.json({ error }, { status: 500 });
     }
 }
-
 
 // PUT /api/phrases
 export async function PUT(req: NextRequest) {
@@ -79,17 +67,16 @@ export async function PUT(req: NextRequest) {
                 transcription,
                 audioUrl,
                 category: {
-                    connect: { id: Number(categoryId) }
-                }
-            }
+                    connect: { id: Number(categoryId) },
+                },
+            },
         });
 
         return NextResponse.json(updatedPhrase);
-    } catch (error:any) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+    } catch (error) {
+        return NextResponse.json({ error }, { status: 500 });
     }
 }
-
 
 // DELETE /api/phrases
 export async function DELETE(req: NextRequest) {
@@ -102,12 +89,11 @@ export async function DELETE(req: NextRequest) {
         }
 
         await prisma.phrase.delete({
-            where: { id: Number(phraseId) }
+            where: { id: Number(phraseId) },
         });
 
         return NextResponse.json({ message: "Phrase deleted successfully" }, { status: 200 });
-    } catch (error:any) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+    } catch (error) {
+        return NextResponse.json({ error }, { status: 500 });
     }
 }
-

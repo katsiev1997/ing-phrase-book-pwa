@@ -14,18 +14,18 @@ export async function GET(req: NextRequest) {
         const phrases = await prisma.phrase.findMany({
             where: {
                 OR: [
-                    { title: { contains: query, mode: 'insensitive' } }, // Поиск по title (регистр не учитывается)
-                    { translate: { contains: query, mode: 'insensitive' } } // Поиск по translate
-                ]
+                    { title: { contains: query, mode: "insensitive" } }, // Поиск по title (регистр не учитывается)
+                    { translate: { contains: query, mode: "insensitive" } }, // Поиск по translate
+                ],
             },
             include: {
                 category: true, // Включаем категорию
-                favoritedBy: true // Включаем пользователей, которые добавили фразу в избранное
-            }
+                favoritedBy: true, // Включаем пользователей, которые добавили фразу в избранное
+            },
         });
 
         return NextResponse.json(phrases);
-    } catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+    } catch (error) {
+        return NextResponse.json({ error }, { status: 500 });
     }
 }
