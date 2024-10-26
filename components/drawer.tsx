@@ -14,8 +14,14 @@ import {
 import { listCategories } from "@/actions/get-categories";
 import { Category } from "@prisma/client";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { Button } from "./ui/button";
 
-export const Drawer = () => {
+type Props = {
+    activeCategoryId: number;
+};
+
+export const Drawer = ({ activeCategoryId }: Props) => {
     const router = useRouter();
     const [categories, setCategories] = useState<Category[]>([]);
 
@@ -34,9 +40,13 @@ export const Drawer = () => {
 
     return (
         <Sheet>
-            <SheetTrigger className="border border-border px-4 py-2 hover:border-black transition-all rounded absolute left-1/2 bottom-20 z-10 -translate-x-1/2 font-semibold">
-                Сменить тему
-            </SheetTrigger>
+            <Button asChild className="absolute left-1/2 bottom-20 z-10 -translate-x-1/2 lowercase">
+                <SheetTrigger>
+                    {categories && activeCategoryId && categories.length > 0
+                        ? categories.filter((c) => c.id === activeCategoryId)[0].name
+                        : "Выберите тему"}
+                </SheetTrigger>
+            </Button>
             <SheetContent>
                 <SheetHeader>
                     <SheetTitle>Выберите тему разговора!</SheetTitle>
@@ -47,11 +57,24 @@ export const Drawer = () => {
                 </SheetHeader>
                 <div className="h-[calc(100vh-4rem] flex flex-col items-start gap-2 overflow-y-auto">
                     {categories.map((category) => (
-                        <SheetClose onClick={() => handleCategory(category.id)} key={category.id}>
-                            {"<  "}
-                            <p className="text-sm uppercase underline underline-offset-4">
-                                {category.name}
-                            </p>
+                        <SheetClose
+                            className="w-full"
+                            onClick={() => handleCategory(category.id)}
+                            key={category.id}
+                        >
+                            <div className="flex items-center gap-2 border-b border-x-white w-full h-10">
+                                <div className="text-2xl h-10 flex flex-col justify-start">
+                                    {"<"}
+                                </div>
+                                <p
+                                    className={cn("text-sm lowercase first-letter:uppercase", {
+                                        "font-semibold text-blue-700":
+                                            category.id === activeCategoryId,
+                                    })}
+                                >
+                                    {category.name}
+                                </p>
+                            </div>
                         </SheetClose>
                     ))}
                 </div>
