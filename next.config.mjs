@@ -1,12 +1,23 @@
-// import nextPwa from 'next-pwa';
+import withPWAInit from "@ducanh2912/next-pwa";
 
-// const withPWA = nextPwa({
-//     dest: 'public', // Папка, куда будет сохраняться сервис-воркер
-//     register: true, // Автоматическая регистрация сервис-воркера
-//     skipWaiting: true, // Пропуск ожидания, чтобы немедленно активировать новый воркер
-//   });
+// const withPwa = nextPwa({
+//     dest: "public",
+//     disable: process.env.NODE_ENV === "development", // 👈 DISABLING PWA IN DEVELOPMENT MODE
+//     register: true,
+//     skipWaiting: true,
+//     runtimeCaching,
+// });
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {};
+// const nextConfig = withPwa({
+//     reactStrictMode: false, // 👈 DISABLING THIS TO AVOID DOUBLE RENDER
+// });
 
-export default nextConfig
+// export default nextConfig;
+
+const withPWA = withPWAInit({
+    dest: "public",
+});
+
+export default withPWA({
+    reactStrictMode: false,
+});

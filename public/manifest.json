@@ -1,22 +1,35 @@
 {
-    "name": "My Next.js PWA",
-    "short_name": "NextPWA",
-    "description": "Прогрессивное веб-приложение на Next.js",
-    "start_url": "/",
-    "background_color": "#ffffff",
-    "theme_color": "#000000",
-    "display": "standalone",
-    "icons": [
-      {
-        "src": "/icons/icon-192x192.svg",
-        "sizes": "192x192",
-        "type": "image/png"
-      },
-      {
-        "src": "/icons/icon-512x512.svg",
-        "sizes": "512x512",
-        "type": "image/png"
-      }
-    ]
-  }
-  
+  "name": "Ing Phrasebook PWA",
+  "short_name": "IngPhraseBook",
+  "description": "A simple progressive web app template using Next.js",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/",
+  "background_color": "#ffffff",
+  "theme_color": "#F3EFE0",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    },
+    {
+      "src": "/icons/icon-maskable-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-maskable-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ]
+}

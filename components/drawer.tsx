@@ -16,6 +16,7 @@ import { Category } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
+import { ArrowLeft } from "lucide-react";
 
 type Props = {
     activeCategoryId: number;
@@ -56,27 +57,26 @@ export const Drawer = ({ activeCategoryId }: Props) => {
                     </SheetDescription>
                 </SheetHeader>
                 <div className="h-[calc(100vh-4rem] flex flex-col items-start gap-2 overflow-y-auto">
-                    {categories.map((category) => (
-                        <SheetClose
-                            className="w-full"
-                            onClick={() => handleCategory(category.id)}
-                            key={category.id}
-                        >
-                            <div className="flex items-center gap-2 border-b border-x-white w-full h-10">
-                                <div className="text-2xl h-10 flex flex-col justify-start">
-                                    {"<"}
+                    {categories &&
+                        categories.map((category) => (
+                            <SheetClose
+                                className="w-full"
+                                onClick={() => handleCategory(category.id)}
+                                key={category.id}
+                            >
+                                <div className="flex items-center gap-2 border-b border-x-white w-full h-10">
+                                    <ArrowLeft size={18}/>
+                                    <p
+                                        className={cn("text-sm lowercase first-letter:uppercase", {
+                                            "font-semibold text-blue-700":
+                                                category.id === activeCategoryId,
+                                        })}
+                                    >
+                                        {category.name}
+                                    </p>
                                 </div>
-                                <p
-                                    className={cn("text-sm lowercase first-letter:uppercase", {
-                                        "font-semibold text-blue-700":
-                                            category.id === activeCategoryId,
-                                    })}
-                                >
-                                    {category.name}
-                                </p>
-                            </div>
-                        </SheetClose>
-                    ))}
+                            </SheetClose>
+                        ))}
                 </div>
             </SheetContent>
         </Sheet>
