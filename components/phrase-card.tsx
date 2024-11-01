@@ -25,7 +25,7 @@ export const PhraseCard = ({ translate, transcription }: Props) => {
                 />
             </div>
             <div className="flex justify-between items-center gap-2">
-                <p className="border-l-4 border-blue-700 pl-2 text-pretty">{transcription}</p>
+                <p className="border-l-4 border-blue-700 pl-2 text-pretty italic">{transcription}</p>
                 <PlayCircle className=" min-w-9 min-h-9 text-blue-700 active:scale-110 transition-all" />
             </div>
         </div>

@@ -13,11 +13,11 @@ type Props = {
 
 export const PhrasesList = ({ phrases }: Props) => {
     return (
-        <div className="overflow-y-auto h-[calc(100vh-4rem)] pb-28">
+        <div className="overflow-y-auto h-[calc(100vh-4rem)] pb-32">
             <Accordion type="single" collapsible className="w-full px-5">
                 {phrases.map((phrase, i) => (
                     <AccordionItem key={i} value={i.toString()}>
-                        <AccordionTrigger className="text-lg text-start font-normal">
+                        <AccordionTrigger className="text-lg text-start font-semibold">
                             {phrase.title}
                         </AccordionTrigger>
                         <AccordionContent>

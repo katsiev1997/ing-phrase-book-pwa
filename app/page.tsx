@@ -1,12 +1,14 @@
-import { getPhrasesByCategory } from "@/actions/get-phrases-by-category";
 import { Drawer } from "@/components/drawer";
 import { PhrasesList } from "@/components/phrases-list";
+import { getPhrasesByCategory } from "@/shared/methods";
 
 type Props = {
     searchParams: {
         categoryId: string | undefined;
     };
 };
+
+
 
 export default async function Home({ searchParams: { categoryId } }: Props) {
     const phrases = await getPhrasesByCategory(Number(categoryId) || 1);

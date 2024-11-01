@@ -11,12 +11,12 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet";
 
-import { listCategories } from "@/actions/get-categories";
 import { Category } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { ArrowLeft } from "lucide-react";
+import { listCategories } from "@/shared/methods";
 
 type Props = {
     activeCategoryId: number;
@@ -41,7 +41,7 @@ export const Drawer = ({ activeCategoryId }: Props) => {
 
     return (
         <Sheet>
-            <Button asChild className="absolute left-1/2 bottom-20 z-10 -translate-x-1/2 lowercase">
+            <Button asChild className="absolute left-1/2 bottom-24 z-10 -translate-x-1/2 lowercase">
                 <SheetTrigger>
                     {categories && activeCategoryId && categories.length > 0
                         ? categories.filter((c) => c.id === activeCategoryId)[0].name

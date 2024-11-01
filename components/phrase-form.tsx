@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { ReactMediaRecorder } from "react-media-recorder";
 import { Input } from "./ui/input";
 
-export const PhraseForm: React.FC = () => {
-    const [phrase, setPhrase] = useState<string>("");
-    const [translation, setTranslation] = useState<string>("");
-    const [transcription, setTranscription] = useState<string>("");
+export const PhraseForm = () => {
+    const [phrase, setPhrase] = useState("");
+    const [translation, setTranslation] = useState("");
+    const [transcription, setTranscription] = useState("");
 
     return (
         <div className="max-w-md mx-auto p-4 bg-white shadow-md rounded-lg">

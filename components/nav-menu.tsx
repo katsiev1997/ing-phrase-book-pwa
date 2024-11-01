@@ -27,7 +27,7 @@ const NavMenuItems = [
 
 export const NavMenu = () => {
     return (
-        <nav className="flex items-center justify-around fixed bottom-0 left-0 right-0 h-16 border-t border-border bg-background">
+        <nav className="flex items-center justify-around fixed bottom-0 left-0 right-0 h-20 pb-4 border-t border-border bg-background">
             {NavMenuItems.map((item) => (
                 <Link className="" href={item.href} key={item.href}>
                     {item.item}
