@@ -5,7 +5,6 @@ import {
     Sheet,
     SheetClose,
     SheetContent,
-    SheetDescription,
     SheetHeader,
     SheetTitle,
     SheetTrigger,
@@ -55,10 +54,6 @@ export const Drawer = ({ activeCategoryId }: Props) => {
             <SheetContent className="max-w-full w-full">
                 <SheetHeader>
                     <SheetTitle>Выберите тему разговора!</SheetTitle>
-                    <SheetDescription>
-                        This action cannot be undone. This will permanently delete your account and
-                        remove your data from our servers.
-                    </SheetDescription>
                 </SheetHeader>
                 <div className="h-full flex flex-col items-start gap-2 overflow-y-scroll">
                     {categories &&
