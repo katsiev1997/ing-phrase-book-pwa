@@ -2,35 +2,11 @@ import { prisma } from "@/prisma/prisma-client";
 import { NextRequest, NextResponse } from "next/server";
 
 // GET /api/categories
-export async function GET(req: NextRequest) {
+export async function GET() {
     try {
-        const { searchParams } = new URL(req.url);
-        const categoryId = searchParams.get("id");
+        const categories = await prisma.category.findMany();
 
-        if (categoryId) {
-            // Получаем одну категорию по id
-            const category = await prisma.category.findUnique({
-                where: { id: Number(categoryId) },
-                include: {
-                    phrases: true, // Включаем связанные фразы
-                },
-            });
-
-            if (!category) {
-                return NextResponse.json({ error: "Category not found" }, { status: 404 });
-            }
-
-            return NextResponse.json(category);
-        } else {
-            // Получаем все категории
-            const categories = await prisma.category.findMany({
-                include: {
-                    phrases: true, // Включаем связанные фразы
-                },
-            });
-
-            return NextResponse.json(categories);
-        }
+        return NextResponse.json(categories);
     } catch (error) {
         return NextResponse.json({ error }, { status: 500 });
     }

@@ -17,7 +17,7 @@ export const PhrasesList = ({ phrases }: Props) => {
             <Accordion type="single" collapsible className="w-full px-5">
                 {phrases.map((phrase, i) => (
                     <AccordionItem key={i} value={i.toString()}>
-                        <AccordionTrigger className="text-lg text-start font-semibold">
+                        <AccordionTrigger className="text-lg text-start font-medium">
                             {phrase.title}
                         </AccordionTrigger>
                         <AccordionContent>

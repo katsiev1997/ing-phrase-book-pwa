@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import {
     Sheet,
     SheetClose,
     SheetContent,
     SheetDescription,
+    SheetFooter,
     SheetHeader,
     SheetTitle,
     SheetTrigger,
@@ -16,7 +17,7 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { ArrowLeft } from "lucide-react";
-import { listCategories } from "@/shared/methods";
+import { getListCategories } from "@/shared/methods";
 
 type Props = {
     activeCategoryId: number;
@@ -27,11 +28,15 @@ export const Drawer = ({ activeCategoryId }: Props) => {
     const [categories, setCategories] = useState<Category[]>([]);
 
     const getCategories = async () => {
-        const data = await listCategories();
-        setCategories(data);
+        try {
+            const data = await getListCategories();
+            setCategories(data);
+        } catch (error) {
+            alert(error);
+        }
     };
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         getCategories();
     }, []);
 
@@ -41,14 +46,14 @@ export const Drawer = ({ activeCategoryId }: Props) => {
 
     return (
         <Sheet>
-            <Button asChild className="absolute left-1/2 bottom-24 z-10 -translate-x-1/2 lowercase">
-                <SheetTrigger>
+            <SheetTrigger asChild>
+                <Button className="absolute left-1/2 bottom-24 z-10 -translate-x-1/2 lowercase">
                     {categories && activeCategoryId && categories.length > 0
                         ? categories.filter((c) => c.id === activeCategoryId)[0].name
                         : "Выберите тему"}
-                </SheetTrigger>
-            </Button>
-            <SheetContent>
+                </Button>
+            </SheetTrigger>
+            <SheetContent className="max-w-full w-full">
                 <SheetHeader>
                     <SheetTitle>Выберите тему разговора!</SheetTitle>
                     <SheetDescription>
@@ -60,12 +65,13 @@ export const Drawer = ({ activeCategoryId }: Props) => {
                     {categories &&
                         categories.map((category) => (
                             <SheetClose
+                                asChild
                                 className="w-full"
                                 onClick={() => handleCategory(category.id)}
                                 key={category.id}
                             >
                                 <div className="flex items-center gap-2 border-b border-x-white w-full h-10">
-                                    <ArrowLeft size={18}/>
+                                    <ArrowLeft size={18} />
                                     <p
                                         className={cn("text-sm lowercase first-letter:uppercase", {
                                             "font-semibold text-blue-700":
@@ -78,6 +84,9 @@ export const Drawer = ({ activeCategoryId }: Props) => {
                             </SheetClose>
                         ))}
                 </div>
+                <SheetFooter>
+                    <button onClick={() => getCategories()}>Загрузить категории</button>
+                </SheetFooter>
             </SheetContent>
         </Sheet>
     );

@@ -15,7 +15,6 @@ export async function GET(req: NextRequest) {
             where: { categoryId: Number(categoryId) },
         });
 
-        console.log(phrases);
 
         // Проверяем длину массива фраз
         if (phrases.length === 0) {
