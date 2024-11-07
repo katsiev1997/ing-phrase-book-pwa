@@ -51,23 +51,22 @@ export const Drawer = ({ activeCategoryId }: Props) => {
                         : "Выберите тему"}
                 </Button>
             </SheetTrigger>
-            <SheetContent className="max-w-full w-full">
+            <SheetContent className="px-1 h-full">
                 <SheetHeader>
-                    <SheetTitle>Выберите тему разговора!</SheetTitle>
+                    <SheetTitle>Выберите тему <br /> разговора!</SheetTitle>
                 </SheetHeader>
-                <div className="h-full flex flex-col items-start gap-2 overflow-y-scroll">
+                <div className="flex flex-col pb-10 gap-2 h-full overflow-y-auto">
                     {categories &&
                         categories.map((category) => (
                             <SheetClose
                                 asChild
-                                className="w-full"
                                 onClick={() => handleCategory(category.id)}
                                 key={category.id}
                             >
-                                <div className="flex items-center gap-2 border-b border-x-white w-full h-10">
+                                <div className="flex items-center gap-1 border-b border-x-white w-full min-h-12">
                                     <ChevronLeft size={18} />
                                     <p
-                                        className={cn("text-sm lowercase first-letter:uppercase", {
+                                        className={cn("lowercase first-letter:uppercase", {
                                             "font-semibold text-blue-700":
                                                 category.id === activeCategoryId,
                                         })}
