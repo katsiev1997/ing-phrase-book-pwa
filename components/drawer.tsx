@@ -6,7 +6,6 @@ import {
     SheetClose,
     SheetContent,
     SheetDescription,
-    SheetFooter,
     SheetHeader,
     SheetTitle,
     SheetTrigger,
@@ -16,7 +15,7 @@ import { Category } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { getListCategories } from "@/shared/methods";
 
 type Props = {
@@ -61,7 +60,7 @@ export const Drawer = ({ activeCategoryId }: Props) => {
                         remove your data from our servers.
                     </SheetDescription>
                 </SheetHeader>
-                <div className="h-[calc(100vh-4rem] flex flex-col items-start gap-2 overflow-y-auto">
+                <div className="h-full flex flex-col items-start gap-2 overflow-y-scroll">
                     {categories &&
                         categories.map((category) => (
                             <SheetClose
@@ -71,7 +70,7 @@ export const Drawer = ({ activeCategoryId }: Props) => {
                                 key={category.id}
                             >
                                 <div className="flex items-center gap-2 border-b border-x-white w-full h-10">
-                                    <ArrowLeft size={18} />
+                                    <ChevronLeft size={18} />
                                     <p
                                         className={cn("text-sm lowercase first-letter:uppercase", {
                                             "font-semibold text-blue-700":
@@ -84,9 +83,6 @@ export const Drawer = ({ activeCategoryId }: Props) => {
                             </SheetClose>
                         ))}
                 </div>
-                <SheetFooter>
-                    <button onClick={() => getCategories()}>Загрузить категории</button>
-                </SheetFooter>
             </SheetContent>
         </Sheet>
     );
