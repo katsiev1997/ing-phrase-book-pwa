@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { ChevronLeft } from "lucide-react";
-import { getListCategories } from "@/shared/methods";
+import { fetchListCategories } from "@/shared/methods";
 
 type Props = {
     activeCategoryId: number;
@@ -27,7 +27,7 @@ export const Drawer = ({ activeCategoryId }: Props) => {
 
     const getCategories = async () => {
         try {
-            const data = await getListCategories();
+            const data = await fetchListCategories();
             setCategories(data);
         } catch (error) {
             alert(error);
@@ -53,7 +53,9 @@ export const Drawer = ({ activeCategoryId }: Props) => {
             </SheetTrigger>
             <SheetContent className="px-1 h-full">
                 <SheetHeader>
-                    <SheetTitle>Выберите тему <br /> разговора!</SheetTitle>
+                    <SheetTitle>
+                        Выберите тему <br /> разговора!
+                    </SheetTitle>
                 </SheetHeader>
                 <div className="flex flex-col pb-10 gap-2 h-full overflow-y-auto">
                     {categories &&

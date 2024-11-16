@@ -2,7 +2,7 @@
 
 import { PhrasesList } from "@/components/phrases-list";
 import { Input } from "@/components/ui/input";
-import { searchPhrases } from "@/shared/methods";
+import { fetchSearchPhrases } from "@/shared/methods";
 import { Phrase } from "@prisma/client";
 import { ChangeEvent, useState } from "react";
 
@@ -14,19 +14,19 @@ const SearchPage = () => {
     const handleSearch = async (e: ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setQuery(value);
-        setError(null); 
+        setError(null);
         if (value.trim() === "") {
             setPhrases([]);
             return;
         }
         try {
-            const res = await searchPhrases(value);
+            const res = await fetchSearchPhrases(value);
             setPhrases(res);
         } catch (error) {
             if (error instanceof Error) {
                 setError(error.message);
             } else {
-                setError('An unknown error occurred');
+                setError("An unknown error occurred");
             }
         }
     };
@@ -42,7 +42,11 @@ const SearchPage = () => {
                 />
             </div>
             {error && <p className="text-destructive">{error}</p>}
-            {phrases ? <PhrasesList phrases={phrases} /> : <p className="text-destructive">Ничего не найдено</p>}
+            {phrases ? (
+                <PhrasesList phrases={phrases} />
+            ) : (
+                <p className="text-destructive">Ничего не найдено</p>
+            )}
         </div>
     );
 };

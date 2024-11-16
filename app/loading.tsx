@@ -1,7 +1,12 @@
+import { Loader } from "lucide-react";
 import React from "react";
 
 const LoadingPage = () => {
-    return <div className="absolute inset-0 bg-black opacity-50">Loading ...</div>;
+    return (
+        <div className="flex items-center justify-center h-screen">
+            <Loader size={40} className="animate-spin" />
+        </div>
+    );
 };
 
 export default LoadingPage;

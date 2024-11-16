@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { NavMenu } from "@/components/nav-menu";
-import { ThemeProvider } from "@/components/theme-provider";
 import { Montserrat } from "next/font/google";
+import Providers from "@/components/providers/providers";
 
 const montserrat = Montserrat({
     weight: ["400", "500", "600", "700", "800"],
@@ -11,10 +11,12 @@ const montserrat = Montserrat({
     variable: "--font-montserrat",
 });
 
-const APP_NAME = "IngPhraseBook";
-const APP_DEFAULT_TITLE = "IngPhraseBook";
-const APP_TITLE_TEMPLATE = "Ingush Phrasebook";
-const APP_DESCRIPTION = "The best ingush phrasebook app!";
+const APP_NAME = "IngPhrase";
+const APP_DEFAULT_TITLE = "IngPhrase";
+const APP_TITLE_TEMPLATE = "Ingush Phrasebook - %s";
+const APP_DESCRIPTION = "Лучший русско-ингушский разговорник! Изучайте ингушский язык с лёгкостью.";
+const APP_KEYWORDS =
+    "ингушский язык, разговорник, русско-ингушский перевод, ингушский словарь, ингушские фразы";
 
 export const metadata: Metadata = {
     applicationName: APP_NAME,
@@ -23,12 +25,12 @@ export const metadata: Metadata = {
         template: APP_TITLE_TEMPLATE,
     },
     description: APP_DESCRIPTION,
+    keywords: APP_KEYWORDS,
     manifest: "/manifest.json",
     appleWebApp: {
         capable: true,
         statusBarStyle: "default",
         title: APP_DEFAULT_TITLE,
-        // startUpImage: [],
     },
     formatDetection: {
         telephone: false,
@@ -41,24 +43,48 @@ export const metadata: Metadata = {
             template: APP_TITLE_TEMPLATE,
         },
         description: APP_DESCRIPTION,
+        url: "https://ingphrasebook.ru",
+        locale: "ru_RU",
+        images: [
+            {
+                url: "/og-image.jpg",
+                width: 1200,
+                height: 630,
+                alt: "Ingush Phrasebook",
+            },
+        ],
     },
     twitter: {
-        card: "summary",
+        card: "summary_large_image",
+        site: "@yourtwitterhandle",
+        creator: "@yourtwitterhandle",
         title: {
             default: APP_DEFAULT_TITLE,
             template: APP_TITLE_TEMPLATE,
         },
         description: APP_DESCRIPTION,
+        images: ["/twitter-image.jpg"],
+    },
+    robots: {
+        index: true,
+        follow: true,
+        "max-snippet": -1,
+        "max-image-preview": "large",
+        "max-video-preview": -1,
+    },
+    alternates: {
+        canonical: "https://ingphrasebook.ru",
     },
 };
 
 export const viewport: Viewport = {
     width: "device-width",
     initialScale: 1,
-    maximumScale: 1,   
+    maximumScale: 1,
     userScalable: false,
     themeColor: "#FFFFFF",
 };
+
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -66,16 +92,20 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="ru" suppressHydrationWarning>
+            <head>
+                <meta charSet="UTF-8" />
+                <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <meta name="author" content="katsiev technologies" />
+                <link rel="icon" href="/favicon.ico" />
+                <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+                <link rel="manifest" href="/manifest.json" />
+            </head>
             <body className={montserrat.variable}>
-                <ThemeProvider
-                    attribute="class"
-                    defaultTheme="system"
-                    enableSystem
-                    disableTransitionOnChange
-                >
+                <Providers>
                     {children}
                     <NavMenu />
-                </ThemeProvider>
+                </Providers>
             </body>
         </html>
     );
