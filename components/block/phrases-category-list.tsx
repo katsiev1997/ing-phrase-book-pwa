@@ -20,11 +20,12 @@ export const PhrasesCategoryList = ({ activeCategoryId }: Props) => {
         return (
             <div className="flex flex-col gap-3 pt-5">
                 {Array.from({ length: 5 }).map((_, i) => (
-                    <div key={i} className="flex items-start py-1 px-5">
+                    <div key={i} className="flex items-start justify-between w-full py-1 px-5">
                         <div className="space-y-2">
-                            <Skeleton className="h-5 w-[250px]" />
-                            <Skeleton className="h-5 w-[200px]" />
+                            <Skeleton className="h-5 w-[280px]" />
+                            <Skeleton className="h-5 w-[240px]" />
                         </div>
+                        <Skeleton className="h-10 w-10 rounded-full" />
                     </div>
                 ))}
             </div>
