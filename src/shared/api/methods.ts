@@ -1,15 +1,17 @@
 import { Phrase, Category } from "@prisma/client";
+import { axiosInstance } from "./axios";
+import axios from "axios";
 
 export const fetchPhrasesByCategory = async (categoryId: number): Promise<Phrase[]> => {
-    const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/phrases?categoryId=${categoryId}`
-    );
-    return await response.json();
+    const { data } = await axiosInstance.get(`/phrases`, {
+        params: { categoryId },
+    });
+    return data;
 };
 
 export const fetchListCategories = async (): Promise<Category[]> => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`);
-    return await response.json();
+    const { data } = await axiosInstance.get(`/categories`);
+    return data;
 };
 
 export const fetchSearchPhrases = async (query: string): Promise<Phrase[]> => {
@@ -18,19 +20,27 @@ export const fetchSearchPhrases = async (query: string): Promise<Phrase[]> => {
     }
 
     try {
-        const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/phrases/search?query=${encodeURIComponent(query)}`
-        );
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || "Something went wrong");
-        }
-
-        const data = await response.json();
+        const { data } = await axiosInstance.get(`/phrases/search`, {
+            params: { query },
+        });
         return data;
     } catch (error) {
-        console.error("Error fetching phrases:", error);
-        throw error; // Перебрасываем ошибку для дальнейшей обработки
+        if (axios.isAxiosError(error)) {
+            const errorMessage = error.response?.data?.error || "Something went wrong";
+            console.error("Error fetching phrases:", errorMessage);
+            throw new Error(errorMessage);
+        }
+        throw error;
     }
+};
+
+export const addPhraseInCategory = async (
+    phrase: { title: string; translate: string; transcription: string },
+    categoryId: number
+): Promise<Phrase> => {
+    const { data } = await axiosInstance.post(`/phrases`, {
+        ...phrase,
+        categoryId,
+    });
+    return data;
 };

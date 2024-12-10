@@ -1,26 +1,66 @@
 "use client";
 
-import { useState } from "react";
-import { ReactMediaRecorder } from "react-media-recorder";
-import { Input } from "../shared/ui/input";
+import { useLayoutEffect, useState } from "react";
+// import { ReactMediaRecorder } from "react-media-recorder";
+import { Button } from "../shared/ui/button";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../shared/ui/select";
+import { Category } from "@prisma/client";
+import { addPhraseInCategory, fetchListCategories } from "../shared/api/methods";
+import { Textarea } from "../shared/ui/textarea";
 
 export const PhraseForm = () => {
-    const [phrase, setPhrase] = useState("");
-    const [translation, setTranslation] = useState("");
+    const [title, setTitle] = useState("");
+    const [translate, setTranslate] = useState("");
     const [transcription, setTranscription] = useState("");
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [categoryId, setCategoryId] = useState(1);
+
+    const getCategories = async () => {
+        try {
+            const data = await fetchListCategories();
+            const sortedData = data
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((category) => ({ ...category, name: category.name.toLowerCase().trim() }));
+            setCategories(sortedData);
+        } catch (error) {
+            alert(error);
+        }
+    };
+
+    useLayoutEffect(() => {
+        getCategories();
+    }, []);
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        addPhraseInCategory({ title, translate, transcription }, Number(categoryId));
+    };
 
     return (
-        <div className="max-w-md mx-auto p-4 shadow-md rounded-lg">
-            <h2 className="text-xl font-bold mb-4 text-center">Создать фразу</h2>
-            <form className="space-y-4">
+        <div className="w-full max-w-[300px] mx-auto p-4 shadow-md rounded-lg border border-muted-foreground">
+            <h2 className="text-xl font-bold mb-4 text-center">Добавить фразу</h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <Select>
+                    <SelectTrigger className="w-full">
+                        <SelectValue className="lowercase first-letter:uppercase" placeholder="Выберите категорию" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            {categories.map((category) => (
+                                <SelectItem onClick={() => setCategoryId(category.id)} key={category.id} value={String(category.id)}>
+                                    <p className="lowercase first-letter:uppercase">{category.name}</p>
+                                </SelectItem>
+                            ))}
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
                 {/* Поле для фразы */}
                 <div>
                     <label className="block text-sm font-medium">Фраза</label>
-                    <Input
-                        type="text"
-                        value={phrase}
-                        onChange={(e) => setPhrase(e.target.value)}
-                        className="mt-1 block w-full border rounded-md p-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    <Textarea
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        className="mt-1 block w-full rounded-md p-2"
                         placeholder="Введите фразу"
                     />
                 </div>
@@ -28,11 +68,10 @@ export const PhraseForm = () => {
                 {/* Поле для перевода */}
                 <div>
                     <label className="block text-sm font-medium">Перевод</label>
-                    <Input
-                        type="text"
-                        value={translation}
-                        onChange={(e) => setTranslation(e.target.value)}
-                        className="mt-1 block w-full border rounded-md p-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    <Textarea
+                        value={translate}
+                        onChange={(e) => setTranslate(e.target.value)}
+                        className="mt-1 block w-full rounded-md p-2"
                         placeholder="Введите перевод"
                     />
                 </div>
@@ -40,17 +79,16 @@ export const PhraseForm = () => {
                 {/* Поле для транскрипции */}
                 <div>
                     <label className="block text-sm font-medium">Транскрипция</label>
-                    <Input
-                        type="text"
+                    <Textarea
                         value={transcription}
                         onChange={(e) => setTranscription(e.target.value)}
-                        className="mt-1 block w-full border rounded-md p-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        className="mt-1 block w-full rounded-md p-2"
                         placeholder="Введите транскрипцию"
                     />
                 </div>
-
+                <Button className="w-full">Сохранить</Button>
                 {/* Блок для записи голосового сообщения */}
-                <div className="mt-4">
+                {/* <div className="mt-4">
                     <ReactMediaRecorder
                         audio
                         render={({ status, startRecording, stopRecording, mediaBlobUrl }) => (
@@ -78,7 +116,7 @@ export const PhraseForm = () => {
                             </div>
                         )}
                     />
-                </div>
+                </div> */}
             </form>
         </div>
     );

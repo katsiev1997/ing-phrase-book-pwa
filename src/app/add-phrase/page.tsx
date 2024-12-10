@@ -1,8 +1,11 @@
-// import { PhraseForm } from "@/src/features/phrase-form";
-import React from "react";
+import { PhraseForm } from "@/src/features/phrase-form";
 
 const AddPhrasePage = () => {
-    return <div className="max-w-md mx-auto p-4 shadow-md rounded-lg">{/* <PhraseForm /> */}</div>;
+    return (
+        <div className="flex justify-center items-center w-full h-[calc(100vh-100px)]">
+            <PhraseForm />
+        </div>
+    );
 };
 
 export default AddPhrasePage;
