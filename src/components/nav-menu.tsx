@@ -23,7 +23,7 @@ const NavMenuItems = [
         Icon: BookHeart,
     },
     {
-        href: "/settings",
+        href: "/profile",
         Icon: UserRoundCog,
     },
 ];

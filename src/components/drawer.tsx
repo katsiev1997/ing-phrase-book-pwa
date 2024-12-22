@@ -1,21 +1,14 @@
 "use client";
 
-import { useLayoutEffect, useState } from "react";
-import {
-    Sheet,
-    SheetClose,
-    SheetContent,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-} from "@/src/shared/ui/sheet";
+import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/src/shared/ui/sheet";
 
-import { Category } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { cn } from "@/src/shared/lib/utils";
 import { Button } from "../shared/ui/button";
 import { ChevronLeft } from "lucide-react";
 import { fetchListCategories } from "@/src/shared/api/methods";
+import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "../shared/ui/skeleton";
 
 type Props = {
     activeCategoryId: number;
@@ -23,21 +16,15 @@ type Props = {
 
 export const Drawer = ({ activeCategoryId }: Props) => {
     const router = useRouter();
-    const [categories, setCategories] = useState<Category[]>([]);
-
-    const getCategories = async () => {
-        try {
-            const data = await fetchListCategories();
-            setCategories(data);
-        } catch (error) {
-            alert(error);
-        }
-    };
-
-    useLayoutEffect(() => {
-        getCategories();
-    }, []);
-
+    const {
+        data: categories = [],
+        isLoading,
+        isError,
+    } = useQuery({
+        queryKey: ["categories"],
+        queryFn: fetchListCategories,
+        select: (data) => data.sort((a, b) => a.name.localeCompare(b.name)),
+    });
     const handleCategory = (id: number) => {
         router.push(`?categoryId=${id}`);
     };
@@ -60,17 +47,12 @@ export const Drawer = ({ activeCategoryId }: Props) => {
                 <div className="flex flex-col pb-10 gap-2 h-full overflow-y-auto">
                     {categories &&
                         categories.map((category) => (
-                            <SheetClose
-                                asChild
-                                onClick={() => handleCategory(category.id)}
-                                key={category.id}
-                            >
+                            <SheetClose asChild onClick={() => handleCategory(category.id)} key={category.id}>
                                 <div className="flex items-center gap-1 border-b border-x-white w-full min-h-12">
                                     <ChevronLeft size={18} />
                                     <p
                                         className={cn("lowercase first-letter:uppercase", {
-                                            "font-semibold text-blue-700":
-                                                category.id === activeCategoryId,
+                                            "font-semibold text-blue-700": category.id === activeCategoryId,
                                         })}
                                     >
                                         {category.name}
@@ -78,6 +60,8 @@ export const Drawer = ({ activeCategoryId }: Props) => {
                                 </div>
                             </SheetClose>
                         ))}
+                    {isLoading && <Skeleton className="h-10 w-full" />}
+                    {isError && <p className="text-center text-red-500">Произошла ошибка при загрузке категорий</p>}
                 </div>
             </SheetContent>
         </Sheet>

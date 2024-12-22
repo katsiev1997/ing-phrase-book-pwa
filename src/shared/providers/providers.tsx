@@ -3,6 +3,7 @@
 import { isServer, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { DialogProvider } from "./dialog-provider";
 import { ThemeProvider } from "./theme-provider";
+import { Toaster } from "../ui/toaster";
 
 function makeQueryClient() {
     return new QueryClient({
@@ -29,13 +30,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     const queryClient = getQueryClient();
 
     return (
-        <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-        >
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <QueryClientProvider client={queryClient}>
+                <Toaster />
                 <DialogProvider>{children}</DialogProvider>
             </QueryClientProvider>
         </ThemeProvider>

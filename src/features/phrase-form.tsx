@@ -7,13 +7,30 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { Category } from "@prisma/client";
 import { addPhraseInCategory, fetchListCategories } from "../shared/api/methods";
 import { Textarea } from "../shared/ui/textarea";
+import { cn } from "../shared/lib/utils";
+import { toast } from "../shared/hooks";
+
+type PhraseFormData = {
+    title: string;
+    translate: string;
+    transcription: string;
+    categoryId: number;
+    titleError: boolean;
+    translateError: boolean;
+    transcriptionError: boolean;
+};
 
 export const PhraseForm = () => {
-    const [title, setTitle] = useState("");
-    const [translate, setTranslate] = useState("");
-    const [transcription, setTranscription] = useState("");
+    const [formData, setFormData] = useState<PhraseFormData>({
+        title: "",
+        translate: "",
+        transcription: "",
+        categoryId: 1,
+        titleError: false,
+        translateError: false,
+        transcriptionError: false,
+    });
     const [categories, setCategories] = useState<Category[]>([]);
-    const [categoryId, setCategoryId] = useState(1);
 
     const getCategories = async () => {
         try {
@@ -31,9 +48,69 @@ export const PhraseForm = () => {
         getCategories();
     }, []);
 
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({ ...prevData, [name]: value }));
+    };
+
+    const validateForm = (): boolean => {
+        let isValid = true;
+
+        if (formData.title.trim() === "") {
+            isValid = false;
+            setFormData((prevData) => ({ ...prevData, titleError: true }));
+        }
+        if (formData.translate.trim() === "") {
+            isValid = false;
+            setFormData((prevData) => ({ ...prevData, translateError: true }));
+        }
+        if (formData.transcription.trim() === "") {
+            isValid = false;
+            setFormData((prevData) => ({ ...prevData, transcriptionError: true }));
+        }
+
+        return isValid;
+    };
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        addPhraseInCategory({ title, translate, transcription }, Number(categoryId));
+
+        // Сброс ошибок перед валидацией
+        setFormData((prevData) => ({
+            ...prevData,
+            titleError: false,
+            translateError: false,
+            transcriptionError: false,
+        }));
+
+        // Проверяем валидность формы
+        const isFormValid = validateForm();
+
+        if (!isFormValid) {
+            return;
+        }
+
+        // Отправляем данные
+        addPhraseInCategory(
+            { title: formData.title, translate: formData.translate, transcription: formData.transcription },
+            Number(formData.categoryId)
+        );
+
+        // Сбрасываем форму после успешной отправки
+        setFormData({
+            title: "",
+            translate: "",
+            transcription: "",
+            categoryId: 1,
+            titleError: false,
+            translateError: false,
+            transcriptionError: false,
+        });
+
+        toast({
+            title: "Фраза добавлена",
+            description: "Фраза успешно добавлена в категорию",
+        });
     };
 
     return (
@@ -47,7 +124,11 @@ export const PhraseForm = () => {
                     <SelectContent>
                         <SelectGroup>
                             {categories.map((category) => (
-                                <SelectItem onClick={() => setCategoryId(category.id)} key={category.id} value={String(category.id)}>
+                                <SelectItem
+                                    onClick={() => setFormData({ ...formData, categoryId: category.id })}
+                                    key={category.id}
+                                    value={String(category.id)}
+                                >
                                     <p className="lowercase first-letter:uppercase">{category.name}</p>
                                 </SelectItem>
                             ))}
@@ -58,9 +139,10 @@ export const PhraseForm = () => {
                 <div>
                     <label className="block text-sm font-medium">Фраза</label>
                     <Textarea
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        className="mt-1 block w-full rounded-md p-2"
+                        name="title"
+                        value={formData.title}
+                        onChange={handleInputChange}
+                        className={cn("mt-1 block w-full rounded-md p-2", formData.titleError && "border-red-500")}
                         placeholder="Введите фразу"
                     />
                 </div>
@@ -69,9 +151,10 @@ export const PhraseForm = () => {
                 <div>
                     <label className="block text-sm font-medium">Перевод</label>
                     <Textarea
-                        value={translate}
-                        onChange={(e) => setTranslate(e.target.value)}
-                        className="mt-1 block w-full rounded-md p-2"
+                        name="translate"
+                        value={formData.translate}
+                        onChange={handleInputChange}
+                        className={cn("mt-1 block w-full rounded-md p-2", formData.translateError && "border-red-500")}
                         placeholder="Введите перевод"
                     />
                 </div>
@@ -80,9 +163,10 @@ export const PhraseForm = () => {
                 <div>
                     <label className="block text-sm font-medium">Транскрипция</label>
                     <Textarea
-                        value={transcription}
-                        onChange={(e) => setTranscription(e.target.value)}
-                        className="mt-1 block w-full rounded-md p-2"
+                        name="transcription"
+                        value={formData.transcription}
+                        onChange={handleInputChange}
+                        className={cn("mt-1 block w-full rounded-md p-2", formData.transcriptionError && "border-red-500")}
                         placeholder="Введите транскрипцию"
                     />
                 </div>

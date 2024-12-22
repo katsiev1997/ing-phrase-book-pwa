@@ -5,18 +5,19 @@ import { Input } from "@/src/shared/ui/input";
 import { fetchSearchPhrases } from "@/src/shared/api/methods";
 import { Phrase } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
-import { Loader } from "lucide-react";
 import { ChangeEvent, useState } from "react";
+import { Loader } from "lucide-react";
 
 const SearchPage = () => {
     const [query, setQuery] = useState("");
-    const { isLoading, isError, data, error, isSuccess } = useQuery<Phrase[], Error>({
+    const { isFetching, isError, data, error, isSuccess } = useQuery<Phrase[], Error>({
         queryKey: ["search", query],
         queryFn: () => fetchSearchPhrases(query),
+        enabled: query.length > 0,
     });
 
     return (
-        <div className="w-full max-w-xl mx-auto my-0">
+        <div className="w-full h-[calc(100vh-120px)] max-w-xl mx-auto my-0">
             <h1 className="text-3xl font-bold mt-2 ml-3">Поиск</h1>
             <div className="w-full px-5">
                 <Input
@@ -26,9 +27,9 @@ const SearchPage = () => {
                     placeholder="Введите фразу"
                 />
             </div>
-            <div className="py-5">
-                {isLoading && (
-                    <div className="flex items-center justify-center h-96">
+            <div className="py-5 h-full">
+                {isFetching && (
+                    <div className="w-full h-full flex justify-center items-center">
                         <Loader size={40} className="animate-spin" />
                     </div>
                 )}
