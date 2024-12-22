@@ -1,14 +1,16 @@
 "use client";
 
-import { useLayoutEffect, useState } from "react";
+import { useState } from "react";
 // import { ReactMediaRecorder } from "react-media-recorder";
 import { Button } from "../shared/ui/button";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../shared/ui/select";
-import { Category } from "@prisma/client";
 import { addPhraseInCategory, fetchListCategories } from "../shared/api/methods";
 import { Textarea } from "../shared/ui/textarea";
 import { cn } from "../shared/lib/utils";
 import { toast } from "../shared/hooks";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
+import { Phrase } from "@prisma/client";
 
 type PhraseFormData = {
     title: string;
@@ -21,6 +23,7 @@ type PhraseFormData = {
 };
 
 export const PhraseForm = () => {
+    const queryClient = useQueryClient();
     const [formData, setFormData] = useState<PhraseFormData>({
         title: "",
         translate: "",
@@ -30,27 +33,53 @@ export const PhraseForm = () => {
         translateError: false,
         transcriptionError: false,
     });
-    const [categories, setCategories] = useState<Category[]>([]);
+    const {
+        data: categories = [],
+        isLoading: isCategoriesLoading,
+        isError: isCategoriesError,
+    } = useQuery({
+        queryKey: ["categories"],
+        queryFn: fetchListCategories,
+        select: (data) => data.sort((a, b) => a.name.localeCompare(b.name)),
+    });
 
-    const getCategories = async () => {
-        try {
-            const data = await fetchListCategories();
-            const sortedData = data
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map((category) => ({ ...category, name: category.name.toLowerCase().trim() }));
-            setCategories(sortedData);
-        } catch (error) {
-            alert(error);
-        }
-    };
-
-    useLayoutEffect(() => {
-        getCategories();
-    }, []);
+    const mutation = useMutation({
+        mutationFn: ({
+            phrase,
+            categoryId,
+        }: {
+            phrase: Omit<Phrase, "id" | "createdAt" | "updatedAt" | "audioUrl" | "categoryId">;
+            categoryId: number;
+        }) => addPhraseInCategory(phrase, categoryId),
+        onSuccess: () => {
+            // Сбрасываем форму после успешной отправки
+            setFormData({
+                ...formData,
+                title: "",
+                translate: "",
+                transcription: "",
+                titleError: false,
+                translateError: false,
+                transcriptionError: false,
+            });
+            queryClient.invalidateQueries({ queryKey: ["phrases", formData.categoryId] });
+            toast({
+                title: "Фраза добавлена",
+                description: "Фраза успешно добавлена в категорию",
+            });
+        },
+        onError: () => {
+            toast({
+                title: "Ошибка",
+                description: "Не удалось добавить фразу",
+                variant: "destructive",
+            });
+        },
+    });
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setFormData((prevData) => ({ ...prevData, [name]: value }));
+        setFormData((prevData) => ({ ...prevData, [name]: value.trim() }));
     };
 
     const validateForm = (): boolean => {
@@ -83,33 +112,16 @@ export const PhraseForm = () => {
             transcriptionError: false,
         }));
 
-        // Проверяем валидность формы
         const isFormValid = validateForm();
+        if (!isFormValid) return;
 
-        if (!isFormValid) {
-            return;
-        }
-
-        // Отправляем данные
-        addPhraseInCategory(
-            { title: formData.title, translate: formData.translate, transcription: formData.transcription },
-            Number(formData.categoryId)
-        );
-
-        // Сбрасываем форму после успешной отправки
-        setFormData({
-            title: "",
-            translate: "",
-            transcription: "",
-            categoryId: 1,
-            titleError: false,
-            translateError: false,
-            transcriptionError: false,
-        });
-
-        toast({
-            title: "Фраза добавлена",
-            description: "Фраза успешно добавлена в категорию",
+        mutation.mutate({
+            phrase: {
+                title: formData.title,
+                translate: formData.translate,
+                transcription: formData.transcription,
+            },
+            categoryId: Number(formData.categoryId),
         });
     };
 
@@ -117,24 +129,31 @@ export const PhraseForm = () => {
         <div className="w-full max-w-[300px] mx-auto p-4 shadow-md rounded-lg border border-muted-foreground">
             <h2 className="text-xl font-bold mb-4 text-center">Добавить фразу</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
-                <Select>
-                    <SelectTrigger className="w-full">
-                        <SelectValue className="lowercase first-letter:uppercase" placeholder="Выберите категорию" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            {categories.map((category) => (
-                                <SelectItem
-                                    onClick={() => setFormData({ ...formData, categoryId: category.id })}
-                                    key={category.id}
-                                    value={String(category.id)}
-                                >
-                                    <p className="lowercase first-letter:uppercase">{category.name}</p>
-                                </SelectItem>
-                            ))}
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
+                {isCategoriesError ? (
+                    <div className="text-red-500 text-center">Ошибка загрузки категорий</div>
+                ) : (
+                    <Select
+                        value={String(formData.categoryId)}
+                        onValueChange={(value) => setFormData({ ...formData, categoryId: Number(value) })}
+                    >
+                        <SelectTrigger className="w-full" disabled={isCategoriesLoading}>
+                            {isCategoriesLoading ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                                <SelectValue className="lowercase first-letter:uppercase" placeholder="Выберите категорию" />
+                            )}
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                {categories.map((category) => (
+                                    <SelectItem key={category.id} value={String(category.id)}>
+                                        <p className="lowercase first-letter:uppercase">{category.name}</p>
+                                    </SelectItem>
+                                ))}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                )}
                 {/* Поле для фразы */}
                 <div>
                     <label className="block text-sm font-medium">Фраза</label>
@@ -170,7 +189,9 @@ export const PhraseForm = () => {
                         placeholder="Введите транскрипцию"
                     />
                 </div>
-                <Button className="w-full">Сохранить</Button>
+                <Button className="w-full" disabled={mutation.isPending}>
+                    {mutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Сохранить"}
+                </Button>
                 {/* Блок для записи голосового сообщения */}
                 {/* <div className="mt-4">
                     <ReactMediaRecorder

@@ -4,19 +4,20 @@ import { Button } from "@/src/shared/ui/button";
 import { Input } from "@/src/shared/ui/input";
 import { useState } from "react";
 import { createCategory } from "../shared/api/methods";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "../shared/hooks";
 
 export const CategoryForm = () => {
     const [name, setName] = useState("");
-
+    const queryClient = useQueryClient();
     const mutation = useMutation({
         mutationFn: createCategory,
         onSuccess: () => {
             toast({
-                title: "Вы успешно авторизовались",
-                description: "Теперь вы можете использовать все функции приложения",
+                title: "Вы успешно добавили категорию",
+                description: "Теперь вы можете добавлять новые фразы в эту категорию",
             });
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
         },
         onError: (error) => {
             toast({

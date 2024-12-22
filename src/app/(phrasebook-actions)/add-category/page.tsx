@@ -21,7 +21,7 @@ export default function AddCategory() {
             <h1 className="text-3xl font-bold mt-2 ml-3">Добавить категорию</h1>
             <div className="w-full flex flex-col gap-5">
                 <h2 className="text-xl font-bold">Список категорий</h2>
-                <div className="flex flex-col gap-3 p-5 w-full h-96 overflow-y-auto">
+                <div className="flex flex-col gap-3 w-full h-80 overflow-y-auto">
                     {isLoading &&
                         Array.from({ length: 5 }).map((_, i) => (
                             <div className="w-full flex justify-between gap-3 items-center" key={i}>
