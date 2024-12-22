@@ -79,7 +79,7 @@ export const PhraseForm = () => {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setFormData((prevData) => ({ ...prevData, [name]: value.trim() }));
+        setFormData((prevData) => ({ ...prevData, [name]: value }));
     };
 
     const validateForm = (): boolean => {
@@ -117,9 +117,9 @@ export const PhraseForm = () => {
 
         mutation.mutate({
             phrase: {
-                title: formData.title,
-                translate: formData.translate,
-                transcription: formData.transcription,
+                title: formData.title.trim(),
+                translate: formData.translate.trim(),
+                transcription: formData.transcription.trim(),
             },
             categoryId: Number(formData.categoryId),
         });
