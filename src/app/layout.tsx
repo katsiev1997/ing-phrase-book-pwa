@@ -3,6 +3,7 @@ import "./globals.css";
 import { NavMenu } from "@/src/components/nav-menu";
 import { Montserrat } from "next/font/google";
 import Providers from "@/src/shared/providers/providers";
+import { YandexMetrikaContainer } from "../shared/lib/yandex-metrika-container";
 
 const montserrat = Montserrat({
     weight: ["400", "500", "600", "700", "800"],
@@ -15,8 +16,7 @@ const APP_NAME = "IngPhrase";
 const APP_DEFAULT_TITLE = "IngPhrase";
 const APP_TITLE_TEMPLATE = "Ingush Phrasebook - %s";
 const APP_DESCRIPTION = "Лучший русско-ингушский разговорник! Изучайте ингушский язык с лёгкостью.";
-const APP_KEYWORDS =
-    "ингушский язык, разговорник, русско-ингушский перевод, ингушский словарь, ингушские фразы";
+const APP_KEYWORDS = "ингушский язык, разговорник, русско-ингушский перевод, ингушский словарь, ингушские фразы";
 
 export const metadata: Metadata = {
     applicationName: APP_NAME,
@@ -85,6 +85,8 @@ export const viewport: Viewport = {
     themeColor: "#FFFFFF",
 };
 
+const analyticsEnabled = !!(process.env.NODE_ENV === "production");
+
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -107,6 +109,7 @@ export default function RootLayout({
                     <NavMenu />
                 </Providers>
             </body>
+            <YandexMetrikaContainer enabled={analyticsEnabled} />
         </html>
     );
 }
