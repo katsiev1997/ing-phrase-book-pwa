@@ -99,6 +99,7 @@ export default function RootLayout({
                 <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                 <meta name="author" content="katsiev technologies" />
+                <meta name="yandex-verification" content="ff94e13ca9de7f41" />
                 <link rel="icon" href="/favicon.ico" />
                 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
                 <link rel="manifest" href="/manifest.json" />
